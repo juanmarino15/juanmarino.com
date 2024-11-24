@@ -25,8 +25,8 @@ const getAccessToken = async (authorizationCode) => {
 
   if (response.ok) {
     const data = await response.json();
-    console.log('Access Token:', data.access_token);
-    console.log('Refresh Token:', data.refresh_token);
+    // console.log('Access Token:', data.access_token);
+    // console.log('Refresh Token:', data.refresh_token);
     return data;
   } else {
     const errorText = await response.text();
@@ -38,7 +38,7 @@ const getAccessToken = async (authorizationCode) => {
 (async () => {
   try {
     const tokenData = await getAccessToken(AUTHORIZATION_CODE);
-    console.log('Token Data:', tokenData);
+    // console.log('Token Data:', tokenData);
   } catch (error) {
     console.error('Error:', error);
   }

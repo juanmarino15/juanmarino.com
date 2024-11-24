@@ -151,7 +151,7 @@ async function getNowPlaying(skipCache: boolean = false): Promise<any> {
       }
     }
   }
-  console.log("Fetching new track");
+  // console.log("Fetching new track");
   const res = await fetch("/api/nowPlaying");
   json = await res.json();
   json.timestamp = new Date();

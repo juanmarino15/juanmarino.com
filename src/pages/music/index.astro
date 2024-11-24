@@ -124,7 +124,7 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
       }
       //   debugger;
       const trackId = paste.split("/").slice(-1)[0].split("?")[0];
-      console.log("spotify token", spotifyToken);
+      // console.log("spotify token", spotifyToken);
 
       setMessage("Processing");
       const res = await fetch("https://api.spotify.com/v1/tracks/" + trackId, {
