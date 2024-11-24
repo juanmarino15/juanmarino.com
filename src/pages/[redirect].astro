@@ -1,0 +1,43 @@
+---
+import redirects from "../redirects.json";
+import HeaderAndFooter from "../components/HeaderAndFooter/index.astro";
+
+export function getStaticPaths() {
+  return Object.keys(redirects).map((endpoint) => {
+    return {
+      params: {
+        redirect: endpoint,
+      },
+    };
+  });
+}
+
+const { redirect } = Astro.params;
+const { title, href, short, internal } = redirects[redirect];
+
+// Ensure we do not redirect API paths
+// if (redirect.startsWith('api')) {
+//   throw new Error('Invalid redirect path');
+// }
+---
+
+<HeaderAndFooter
+  allowMainStyles
+  title={short || title}
+  redirect={internal ? false : true}
+  description={`Redirect to ${title}, found at ${href}`}
+  noindex
+  hideSpotify
+  pageNotInNav
+>
+  <meta http-equiv="refresh" content={`0; url=${href}`} slot="head" />
+  <h1>Redirecting to {title}</h1>
+</HeaderAndFooter>
+
+<script
+  define:vars={{
+    href: href,
+  }}
+>
+  window.location.href = href;
+</script>

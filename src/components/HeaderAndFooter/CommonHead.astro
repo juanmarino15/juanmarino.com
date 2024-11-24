@@ -1,0 +1,394 @@
+---
+import { GoogleFontsOptimizer } from "astro-google-fonts-optimizer";
+import { SEO } from "astro-seo";
+import { renderImg } from "astro-imagetools/api";
+import satori from "satori";
+import { Resvg } from "@resvg/resvg-js";
+import fs from "fs";
+Astro.props.fontUrl =
+  Astro.props.fontUrl ||
+  "https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600&display=swap";
+
+const font = fs.readFileSync(
+  "src/assets/fonts/Assistant/static/Assistant-Regular.ttf"
+);
+const font2 = fs.readFileSync(
+  "src/assets/fonts/Assistant/static/Assistant-SemiBold.ttf"
+);
+
+const ogBg = fs.readFileSync(
+  "src/assets/images/bg/crosland.jpg"
+);
+const b64 = ogBg.toString("base64");
+
+// const fontBuffer = await font.arrayBuffer();
+const title = Astro.props.title
+  ? Astro.props.title + " | Juan Marino"
+  : "Juan Marino";
+let svg = "";
+if (!Astro.props.image) {
+  const arrowSvg = Astro.props.redirect
+    ? {
+        type: "svg",
+        props: {
+          xmlns: "http://www.w3.org/2000/svg",
+          viewBox: "0 0 24 24",
+          children: {
+            type: "path",
+            props: {
+              fill: "white",
+              d: "M6.4 18L5 16.6L14.6 7H6V5h12v12h-2V8.4z",
+            },
+          },
+          width: 60,
+          height: 60,
+          style: {
+            opacity: 0.5,
+            marginTop: 30,
+            marginLeft: -4,
+          },
+        },
+      }
+    : "";
+
+  svg = await satori(
+    {
+      type: "div",
+      props: {
+        children: [
+          {
+            type: "img",
+            props: {
+              src: `data:image/jpeg;base64,${b64}`,
+              style: {
+                // opacity: 0.5,
+                transform: `scale(1.2) translate(8%,6%)`,
+              },
+            },
+          },
+          {
+            type: "div",
+            props: {
+              children: [
+                {
+                  type: "div",
+                  props: {
+                    children: [Astro.props.title || "Juan Marino", arrowSvg],
+                    style: {
+                      display: "flex",
+                    },
+                  },
+                },
+                ,
+                {
+                  type: "div",
+                  props: {
+                    children: Astro.props.title
+                      ? "Juan Marino"
+                      : [
+                          "Software Engineer. Futbol Enthusiast.",
+                          {
+                            type: "div",
+                            props: {
+                              children: "Triathle. Lifelong Student.",
+                            },
+                          },
+                        ],
+                    style: {
+                      display: "flex",
+                      flexDirection: "column",
+                      fontSize: Astro.props.title ? 60 : 40,
+                      opacity: Astro.props.title ? 0.4 : 0.4,
+                      fontWeight: 400,
+                    },
+                  },
+                },
+              ],
+              style: {
+                display: "flex",
+                flexDirection: "column",
+                position: "absolute",
+                top: 50,
+                left: 70,
+                color: "white",
+                fontSize: 120,
+                maxWidth: 1200 - 50 * 2,
+                fontWeight: 700,
+                gap: -8,
+                // textShadow: `0px 0px 40px black`,
+              },
+            },
+          },
+          // {
+          //   type: "div",
+          //   props: {
+          //     children: "Juan Marino",
+          //     style: {
+          //       position: "absolute",
+          //       bottom: 180,
+          //       left: 50,
+          //       color: "white",
+          //       fontSize: 90,
+          //     },
+          //   },
+          // },
+          // {
+          //   type: "div",
+          //   props: {
+          //     children: [
+          //       {
+          //         type: "div",
+          //         props: {
+          //           children: "Software Engineer. Photographer.",
+          //         },
+          //       },
+          //       "Marathoner. Lifelong Student.",
+          //     ],
+          //     style: {
+          //       display: "flex",
+          //       flexDirection: "column",
+          //       position: "absolute",
+          //       bottom: 40,
+          //       left: 50,
+          //       color: "white",
+          //       fontSize: 50,
+          //       // opacity: 0.7,
+          //       fontWeight: 700,
+          //     },
+          //   },
+          // },
+        ],
+        style: {
+          display: "flex",
+          // background: "linear-gradient(140deg, #0032D9, #00CE84)",
+          background: "black",
+          width: "100%",
+          height: "100%",
+        },
+      },
+    },
+    {
+      width: 1200,
+      height: 630,
+      fonts: [
+        {
+          name: "Assistant",
+          data: font,
+          weight: 400,
+          style: "normal",
+        },
+        {
+          name: "Assistant",
+          data: font2,
+          weight: 700,
+          style: "normal",
+        },
+      ],
+    }
+  );
+
+  const resvg = new Resvg(svg, {
+    fitTo: {
+      mode: "width",
+      value: 1200,
+    },
+  });
+  const pngData = resvg.render().asPng().toString("base64");
+
+  Astro.props.image = `data:image/jpeg;base64,${pngData}`;
+}
+
+const { noindex } = Astro.props;
+
+const { link, style, img } = await renderImg({
+  src: Astro.props.image,
+  breakpoints: [1200],
+  format: "webp",
+  alt: "",
+  quality: 40,
+});
+
+const ogThumb = img.split('srcset="')[1].split('"')[0];
+
+const image = `${
+  import.meta.env.DEV ? "" : "https://blakesanie.com"
+}${ogThumb}`;
+const imageAlt =
+  Astro.props?.imageAlt || "Open Graph Thumbnail Image for blakesanie.com";
+const description =
+  Astro.props.description ||
+  "Software Engineer. Futbol Enthusiast. Triathle. Lifelong Student.";
+
+// console.log("title, desc", title, description, "props", Astro.props);
+---
+
+<html lang="en">
+  <head>
+    <!-- <meta charset="utf-8" /> -->
+    <!-- <meta viewport="width=device-width, initial-scale=1" /> -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <SEO
+      title={title}
+      description={description}
+      noindex={noindex ? true : false}
+      charset="utf-8"
+      openGraph={{
+        basic: {
+          title: title,
+          type: "website",
+          image: image,
+        },
+        optional: {
+          description: description,
+        },
+        image: {
+          type: "image/" + image.split(".").pop(),
+          // width: width,
+          // height: height,
+          alt: imageAlt,
+        },
+      }}
+      twitter={{
+        creator: "@blakesanie",
+        card: "summary_large_image",
+        site: "@blakesanie",
+        title: title,
+        image: image,
+        imageAlt: "Open Graph Thumbnail Image for page. " + description,
+        description: description,
+      }}
+      extend={{}}
+    />
+    <meta
+      name="google-site-verification"
+      content="ePB1GvvA8L5Hza96sGcmDLw_jIzjhQ2JhXbIAg_8hlA"
+    />
+    <meta name="theme-color" content={Astro.props.themeColor} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link
+      rel="apple-touch-icon-precomposed"
+      sizes="57x57"
+      href="/favicons/apple-touch-icon-57x57.png"
+    />
+    <link
+      rel="apple-touch-icon-precomposed"
+      sizes="114x114"
+      href="/favicons/apple-touch-icon-114x114.png"
+    />
+    <link
+      rel="apple-touch-icon-precomposed"
+      sizes="72x72"
+      href="/favicons/apple-touch-icon-72x72.png"
+    />
+    <link
+      rel="apple-touch-icon-precomposed"
+      sizes="144x144"
+      href="/favicons/apple-touch-icon-144x144.png"
+    />
+    <link
+      rel="apple-touch-icon-precomposed"
+      sizes="60x60"
+      href="/favicons/apple-touch-icon-60x60.png"
+    />
+    <link
+      rel="apple-touch-icon-precomposed"
+      sizes="120x120"
+      href="/favicons/apple-touch-icon-120x120.png"
+    />
+    <link
+      rel="apple-touch-icon-precomposed"
+      sizes="76x76"
+      href="/favicons/apple-touch-icon-76x76.png"
+    />
+    <link
+      rel="apple-touch-icon-precomposed"
+      sizes="152x152"
+      href="/favicons/apple-touch-icon-152x152.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/favicons/favicon-196x196.png"
+      sizes="196x196"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/favicons/favicon-96x96.png"
+      sizes="96x96"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/favicons/favicon-32x32.png"
+      sizes="32x32"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/favicons/favicon-16x16.png"
+      sizes="16x16"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/favicons/favicon-128.png"
+      sizes="128x128"
+    />
+    <meta name="application-name" content=" " />
+    <meta name="msapplication-TileColor" content="#FFFFFF" />
+    <meta
+      name="msapplication-TileImage"
+      content="/favicons/mstile-144x144.png"
+    />
+    <meta
+      name="msapplication-square70x70logo"
+      content="/favicons/mstile-70x70.png"
+    />
+    <meta
+      name="msapplication-square150x150logo"
+      content="/favicons/mstile-150x150.png"
+    />
+    <meta
+      name="msapplication-wide310x150logo"
+      content="/favicons/mstile-310x150.png"
+    />
+    <meta
+      name="msapplication-square310x310logo"
+      content="/favicons/mstile-310x310.png"
+    />
+
+    <Fragment
+      set:html={`<script type="application/ld+json">{
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Juan Marino",
+      "url": "https://blakesanie.com",
+      "sameAs": [
+        "https://linkedin.com/in/blakesanie/","https://blakesanie.medium.com/","https://instagram.com/blake_sanie/","https://github.com/blakesanie","https://twitter.com/blakesanie"
+       ]
+    }</script>`}
+    />
+    <script defer src="/_vercel/insights/script.js"></script>
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=UA-164774604-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "UA-164774604-1");
+    </script>
+    <GoogleFontsOptimizer url={Astro.props.fontUrl} />
+    <slot name="head" />
+  </head>
+  <!-- <Fragment set:html={svg} /> -->
+  <body class:list={Astro.props.bodyClasslist}><slot /></body>
+</html>

@@ -1,0 +1,311 @@
+---
+import HeaderAndFooter from "../components/HeaderAndFooter/index.astro";
+import HomePageSection from "../components/HomePageSection.astro";
+
+const { message } = Astro.props;
+
+const markupData = [
+  {
+    text: [
+    "I'm a creative Software Engineer based in Chicago, driven by a passion for transforming sports, logistics, and data analytics."
+    ],
+    imageUrl: "/src/assets/images/bg/chi.jpg",
+    links: [
+      {
+        href: "/resume",
+        label: "Résumé",
+        target: "_blank",
+        nofollow: true,
+      },
+      {
+        href: "/projects",
+        label: "Projects",
+      },
+      {
+        href: "/linkedin",
+        label: "LinkedIn",
+        target: "_blank",
+        nofollow: true,
+      },
+      {
+        href: "/github",
+        label: "GitHub",
+        target: "_blank",
+        nofollow: true,
+      },
+    ],
+  },
+  {
+    text: [
+    "Currently pursuing a Master's in Computer Science with a focus on AI and machine learning at the University of Colorado Boulder. Developing innovative AI techniques."    ],
+    imageUrl: "/src/assets/images/bg/crosland.jpg",
+    links: [],
+  },
+  {
+    text: ["Beyond my novel work, I'm an ambitious triathlete,"],
+    imageUrl: "/src/assets/images/bg/bike.jpg",
+    links: [
+      {
+        href: "/strava",
+        label: "Strava",
+      },
+      {
+        href: "/aero",
+        label: "Aero",
+      },
+    ],
+    style: {
+      maxHeight: "min(500px,130vw)",
+    },
+  },
+  {
+    text: ["Soccer enthusiast channeling my passion into sports analytics,"],
+    imageUrl:   "src/assets/images/Madrid_Stadium.jpg"
+,
+    links: [
+      // {
+      //   href: "/photo",
+      //   label: "Gallery",
+      // },
+      // {
+      //   href: "/photo/map",
+      //   label: "Capture Map",
+      //   nofollow: true,
+      // },
+    ],
+    style: {
+      maxHeight: "min(500px,130vw)",
+    },
+  },
+  // {
+  //   text: ["home chef, and culinary explorer."],
+  //   imageUrl: "/src/assets/images/bg/food.jpg",
+  //   links: [
+     
+  //     {
+  //       href: "/menu",
+  //       label:
+  //         ["Winter", "Spring", "Summer", "Fall"][
+  //           Math.floor(new Date().getMonth() / 3)
+  //         ] + " Menu",
+  //     },
+  //   ],
+  //   style: {
+  //     maxHeight: "min(500px,130vw)",
+  //   },
+  // },
+
+  {
+    text: ["Let's connect."],
+    imageUrl: "/src/assets/images/bg/connect.jpg",
+    links: [
+      {
+        href: "mailto:juasmarino@gmail.com",
+        label: "Email",
+        class: "email",
+        nofollow: true,
+      },
+      {
+        href: "/contact.vcf",
+        label: "Contact Card",
+        class: "contactCard",
+      },
+      {
+        href: "/instagram",
+        label: "Instagram",
+        target: "_blank",
+        nofollow: true,
+      },
+    ],
+    style: {
+      maxHeight: "min(500px,130vw)",
+    },
+  },
+];
+---
+
+<HeaderAndFooter color="rgba(0,0,0,0.5)" themeColor="black" isHome={true}>
+  <HomePageSection
+    id="firstSection"
+    class="homePageSection sectionTransitionParent"
+    imageUrl="/src/assets/images/juan_temp_cover.jpg"
+  >
+    <h1>Hi, I'm Juan</h1>
+    <div id="typedContainer">
+      <span id="typed"></span>
+    </div>
+  </HomePageSection>
+  {
+    markupData.map((data, i) => (
+      <HomePageSection
+        imageUrl={data.imageUrl}
+        text={data.text}
+        links={data.links}
+        class="homePageSection sectionTransitionParent"
+        style={data.style}
+      />
+    ))
+  }
+</HeaderAndFooter>
+{
+  message && (
+    <Fragment
+      set:html={`<script>setTimeout(function(){history.pushState({}, null, '/');alert("${message}");}, 200)</script>`}
+    />
+  )
+}
+
+<script>
+  import Typed from "typed.js";
+
+  const typedElement = document.getElementById("typedContainer");
+  const h1 = document.querySelector("h1");
+
+  setTimeout(() => {
+    const typed = new Typed("#typed", {
+      strings: ["^500 Scroll to learn more..."],
+      typeSpeed: 50,
+      backSpeed: 40,
+      backDelay: 1500,
+      loop: true,
+    });
+  }, 2000);
+
+  const sections = document.querySelectorAll<HTMLElement>(
+    ".sectionTransitionParent"
+  );
+
+  function handleScroll() {
+    const screenCenter = window.scrollY + window.innerHeight / 2;
+    let sectionHeight = sections[0].offsetHeight;
+    const rate = sectionHeight * 0.15;
+    sections.forEach((section, i) => {
+      const sectionCenter = section.offsetTop + section.offsetHeight / 2;
+      let effectiveScreenCenter = screenCenter;
+      if (sectionCenter < window.innerHeight / 2) {
+        // handles proper interpolation when top sections do not span window height, so the peak opacity is before the window center
+        effectiveScreenCenter =
+          screenCenter - (window.innerHeight / 2 - sectionHeight / 2);
+      }
+      const distUnder =
+        document.body.scrollHeight - section.offsetTop - section.offsetHeight;
+      const bestScreenCenter =
+        window.scrollY +
+        window.innerHeight -
+        section.offsetHeight / 2 -
+        distUnder;
+      const dist =
+        sectionCenter - Math.max(bestScreenCenter, effectiveScreenCenter);
+      let diff = dist / sectionHeight;
+      const bg = section.querySelector<HTMLElement>(".bg");
+      const children = section.childNodes;
+      if (bg) {
+        bg.style.opacity = 0.05 + 0.55 * (1 - Math.abs(diff)) + "";
+      }
+      if (i == 0 && h1 && typedElement) {
+        h1.style.transform = `translateY(${1.4 * diff * rate}px)`;
+        typedElement.style.transform = `translateY(${0.7 * diff * rate}px)`;
+      } else {
+        for (let j = 0; j < children.length; j++) {
+          const child = children[j];
+          if (!(child instanceof HTMLElement)) {
+            continue;
+          }
+          if (!child.classList.contains("bg")) {
+            child.style.transform = `translateY(${diff * rate}px)`;
+          }
+        }
+      }
+    });
+  }
+
+  window.addEventListener("scroll", handleScroll);
+
+  handleScroll();
+</script>
+
+<style>
+  html {
+    color-scheme: only dark;
+    background-color: black;
+  }
+  :global(.navChip) {
+    background: rgb(0, 126, 204, 0.8);
+  }
+  :global(.navChipNested) {
+    display: none;
+  }
+  body {
+    color: white;
+  }
+  .homePageSection {
+    max-height: min(1000px, 170vw);
+  }
+  #firstSection {
+    animation: fadeIn 3s ease;
+  }
+  :global(.bg) {
+    opacity: 0.05;
+  }
+  h1 {
+    /* animation: fadeIn 3s ease-in; */
+    /* z-index: 9; */
+    font-size: 3.4em;
+    /* mix-blend-mode: soft-light; */
+    opacity: 1 !important;
+    padding: 0 1em;
+    text-align: center;
+    /* pointer-events: none; */
+    /* filter: contrast(4); */
+    /* backdrop-filter: contrast(4); */
+    /* clip-path: ; */
+    /* margin-top: 0.5em; */
+    width: 10em;
+    z-index: 99999;
+  }
+  #typedContainer {
+    font-size: 1.6em;
+    height: 2em;
+    z-index: 100;
+    margin-top: -0.2em;
+  }
+  .fullCenter {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  #mainMac {
+    flex: 1;
+    width: 100%;
+    object-fit: cover;
+    border: 1px solid yellow;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @media screen and (max-width: 800px) {
+    :global(main) {
+      margin-top: 0 !important;
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    :global(main) {
+      font-size: calc(0.4em + 1.6vmin);
+    }
+    .homePageSection :global(h2) {
+      padding: 0 1em;
+    }
+    .homePageSection :global(a) {
+      font-size: 1.6em;
+    }
+  }
+</style>
