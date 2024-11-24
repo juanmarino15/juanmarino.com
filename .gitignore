@@ -32,3 +32,16 @@ api/*/**/.*
 # blog
 photo-portfolio
 public/assets/imageEmbeddings*.json
+
+# Large media files
+*.pdf
+public/**/*.pdf
+public/**/*.gif
+src/assets/images/**/*.png
+src/assets/images/**/*.jpg
+
+# Or specific files
+public/thePerfectPitchPoster.pdf
+public/thePerfectPitch.pdf
+public/kbaiPaper.pdf
+public/whitebalance.pdf
