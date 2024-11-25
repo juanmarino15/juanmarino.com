@@ -54,10 +54,10 @@ function blurImage(image, kernel) {
 const kernel = get2dGaussianKernel(20, 10);
 
 async function captureIteration() {
-  console.log("capturing from cam", cam);
+  // console.log("capturing from cam", cam);
   let frame;
   frame = await cam.capture(); //tf.browser.fromPixels(document.querySelector("img"));
-  console.log("got frame!");
+  // console.log("got frame!");
   // debugger;
   const [height, width, depth] = frame.shape;
   const newHeight = (width / 16) * 9;
@@ -69,12 +69,12 @@ async function captureIteration() {
   if (window.facingUser === false) {
     shouldInvertX = !shouldInvertX;
   }
-  console.log(
-    "SHOULD INVERT TENSOR",
-    shouldInvertX,
-    window.facingUser,
-    !window.facingUser && !(window.facingUser === undefined)
-  );
+  // console.log(
+  //   "SHOULD INVERT TENSOR",
+  //   shouldInvertX,
+  //   window.facingUser,
+  //   !window.facingUser && !(window.facingUser === undefined)
+  // );
   let box = shouldInvertX ? [y1, 1, 1 - y1, 0] : [y1, 0, 1 - y1, 1];
   const cropped = tf.image.cropAndResize(expanded, [box], [0], [720, 1280]);
   tf.dispose(expanded);
@@ -150,9 +150,9 @@ window.setMLCam = async function (mode) {
   if (mode) {
     options.facingMode = mode;
   }
-  console.log("get cam with options", options);
+  // console.log("get cam with options", options);
   cam = await tf.data.webcam(undefined, options);
-  console.log("set new cam!", cam);
+  // console.log("set new cam!", cam);
 };
 
 // let img;

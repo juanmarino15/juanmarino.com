@@ -1,26 +1,6 @@
 {
-  "buildCommand": "node vercel-build.js",
-  "devCommand": "npm run dev",
-  "installCommand": "npm config set registry http://registry.npmjs.org && npm install",
-  "outputDirectory": "dist",
-  "framework": "astro",
-  "cleanUrls": true,
-  "trailingSlash": false,
-  "headers": [
-    {
-      "source": "/_astro/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ]
-}
+    "buildCommand": "NODE_OPTIONS='--max-old-space-size=3072' npm run build",
+    "installCommand": "npm install",
+    "outputDirectory": "dist",
+    "framework": "astro"
+  }

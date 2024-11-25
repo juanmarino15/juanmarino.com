@@ -2,13 +2,15 @@
   "name": "juanmarino.com",
   "type": "module",
   "version": "0.0.1",
-  "scripts": {
-    "dev": "astro dev --host --port $PORT",
+"scripts": {
+    "dev": "astro dev",
     "start": "astro dev",
-    "build": " astro build",
-    "build-local": "astro build",
+    "build": "astro build --verbose=false",
     "preview": "astro preview",
     "astro": "astro"
+  },
+  "engines": {
+    "node": ">=18.14.1"
   },
   "dependencies": {
     "@astrojs/mdx": "^0.19.4",

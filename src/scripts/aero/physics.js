@@ -160,7 +160,7 @@ async function calibrate() {
   }
   baselineLow = absorbedMin;
   baselineHigh = absorbedMax;
-  console.log("set baselines", baselineLow, baselineHigh);
+  // console.log("set baselines", baselineLow, baselineHigh);
   speedUnitSelect.value = initialUnit;
   handleNewSpeedUnit(initialUnit);
   setSpeedInMPS(initialSpeed);

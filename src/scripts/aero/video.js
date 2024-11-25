@@ -24,7 +24,7 @@ async function setDevice() {
   } else {
     document.body.classList.add("facingEnv");
   }
-  console.log("facing mode", mode);
+  // console.log("facing mode", mode);
   let stream;
   try {
     await window.setMLCam(mode);
